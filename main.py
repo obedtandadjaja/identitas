@@ -1,10 +1,8 @@
 import numpy as np
 from cv2 import cv2
 
-BACKGROUND_THRESHOLD = 20
-
 def main():
-  img = cv2.imread('training_images/ktp-2.png')
+  img = cv2.imread('training_images/ktp-1.png')
 
   prepreprocessed_img = prepreprocess_image(img)
   cv2.imwrite('sample0.png', prepreprocessed_img)
@@ -13,6 +11,7 @@ def main():
   cv2.imwrite('sample1.png', preprocessed_img)
 
   contours_sorted, contour_is_card = find_cards(preprocessed_img)
+  print(contours_sorted)
 
   card_contours = []
   for i in range(len(contours_sorted)):
@@ -36,20 +35,23 @@ def prepreprocess_image(img):
   """
 
   hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-  lower_blue = np.array([12, 12, 135])
-  upper_blue = np.array([168, 168, 255])
+  blur = cv2.GaussianBlur(hsv, (5, 5), 0)
 
-  mask = cv2.inRange(hsv, lower_blue, upper_blue)
+  cv2.imwrite('blur.png', blur)
 
-  res = cv2.bitwise_and(img, img, mask = mask)
+  # lower_blue = np.array([50, 20, 0])
+  # upper_blue = np.array([255, 255, 255])
+  # mask = cv2.inRange(blur, lower_blue, upper_blue)
+  # res = cv2.bitwise_and(img, img, mask = mask)
 
-  return res
+  return blur
 
 def preprocess_image(img):
   """Grays, blurs, and thresholds the img"""
 
   gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
   blur = cv2.GaussianBlur(gray, (5, 5), 0)
+  cv2.imwrite('blur1.png', blur)
 
   """
   The best threshold level depends on the ambient lighting conditions.
@@ -63,11 +65,11 @@ def preprocess_image(img):
   than that. This allows the threshold to adapt to the lighting conditions
   """
 
-  img_w, img_h = np.shape(img)[:2]
-  background_level = gray[int(img_h/100)][int(img_w/2)] # 1% from top, 50% from side
-  threshold_level = background_level + BACKGROUND_THRESHOLD
+  # img_w, img_h = np.shape(img)[:2]
+  # background_level = gray[int(img_h/100)][int(img_w/2)] # 1% from top, 50% from side
+  # threshold_level = background_level
 
-  _, threshold = cv2.threshold(blur, threshold_level, 255, cv2.THRESH_BINARY)
+  _, threshold = cv2.threshold(blur, 127, 255, cv2.THRESH_BINARY)
 
   return threshold
 
