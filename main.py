@@ -1,23 +1,28 @@
 import numpy as np
 from cv2 import cv2
+import os
 
 def main():
-  img = cv2.imread('training_images/ktp-1.png')
+  for subdir, dirs, files in os.walk('training_images'):
+    for i in range(len(files)):
+      if '.png' not in files[i]:
+        continue
 
+      img = cv2.imread(os.path.join(subdir, files[i]))
+      cv2.imwrite(os.path.join('results', files[i]), process_image(img))
+
+def process_image(img):
   prepreprocessed_img = prepreprocess_image(img)
-  cv2.imwrite('sample0.png', prepreprocessed_img)
-
   preprocessed_img = preprocess_image(prepreprocessed_img)
-  cv2.imwrite('sample1.png', preprocessed_img)
 
   contours_sorted, contour_is_card = find_cards(preprocessed_img)
-  print(contours_sorted)
 
   card_contours = []
   for i in range(len(contours_sorted)):
     if contour_is_card[i] == 1:
       cv2.drawContours(img, [contours_sorted[i]], -1, (255, 0, 0), 2)
-  cv2.imwrite('sample2.png', img)
+    else:
+      cv2.drawContours(img, [contours_sorted[i]], -1, (255, 0, 0), 2)
 
   # if len(contours_sorted) != 0:
   #   cards = []
@@ -28,6 +33,8 @@ def main():
   # else:
   #   print('Contours not found!')
 
+  return img
+
 def prepreprocess_image(img):
   """
   Preprocess the image to only show blue in the image.
@@ -36,8 +43,6 @@ def prepreprocess_image(img):
 
   hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
   blur = cv2.GaussianBlur(hsv, (5, 5), 0)
-
-  cv2.imwrite('blur.png', blur)
 
   # lower_blue = np.array([50, 20, 0])
   # upper_blue = np.array([255, 255, 255])
@@ -51,7 +56,6 @@ def preprocess_image(img):
 
   gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
   blur = cv2.GaussianBlur(gray, (5, 5), 0)
-  cv2.imwrite('blur1.png', blur)
 
   """
   The best threshold level depends on the ambient lighting conditions.
@@ -64,11 +68,9 @@ def preprocess_image(img):
   its intensity. The adaptive threshold is set at THRESHOLD_ADDER higher
   than that. This allows the threshold to adapt to the lighting conditions
   """
-
   # img_w, img_h = np.shape(img)[:2]
   # background_level = gray[int(img_h/100)][int(img_w/2)] # 1% from top, 50% from side
   # threshold_level = background_level
-
   _, threshold = cv2.threshold(blur, 127, 255, cv2.THRESH_BINARY)
 
   return threshold
