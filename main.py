@@ -1,9 +1,12 @@
 import numpy as np
 from cv2 import cv2
 import os
+import imutils
+# import pyimagesearch.transform import four_point_transform
+from skimage.filters import threshold_local
 
 def main():
-  for subdir, dirs, files in os.walk('training_images'):
+  for subdir, _, files in os.walk('training_images'):
     for i in range(len(files)):
       if '.png' not in files[i]:
         continue
@@ -17,7 +20,6 @@ def process_image(img):
 
   contours_sorted, contour_is_card = find_cards(preprocessed_img)
 
-  card_contours = []
   for i in range(len(contours_sorted)):
     if contour_is_card[i] == 1:
       cv2.drawContours(img, [contours_sorted[i]], -1, (255, 0, 0), 2)
@@ -113,7 +115,7 @@ def find_cards(img):
     perimeter = cv2.arcLength(contours_sort[i], True)
     approx = cv2.approxPolyDP(contours_sort[i], 0.01*perimeter, True)
 
-    if hierarchies_sort[i][3] == -1 and len(approx) == 4:
+    if hierarchies_sort[i][3] == -1 and len(approx) >= 4:
       contour_is_card[i] = 1
 
   return contours_sort, contour_is_card
@@ -199,5 +201,36 @@ def preprocess_card(img, contour):
 def draw_result(img, card):
   return None
 
+def main2():
+  """
+  main2 - uses edge detection
+  """
+
+  # load the image, compute the ratio of old vs new height, clone, and resize
+  image = cv2.imread('training_images/ktp-2.png')
+  ratio = image.shape[0] / 500.0
+  orig = image.copy()
+  image = imutils.resize(image, height = 500)
+  
+  hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+  lower_blue = np.array([80, 0, 0])
+  upper_blue = np.array([140, 255, 255])
+  mask = cv2.inRange(hsv, lower_blue, upper_blue)
+  res = cv2.bitwise_and(hsv, hsv, mask = mask)
+
+  # convert image to grayscale, blur it, and find edges
+  gray = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
+  gray = cv2.GaussianBlur(gray, (5, 5), 0)
+  edged = cv2.Canny(gray, 75, 200) # uses canny edge detection algorithm
+
+  print("step 1: edge detection")
+  cv2.imshow("image", image)
+  cv2.imshow("res", res)
+  cv2.imshow("edged", edged)
+  cv2.waitKey(0)
+  cv2.destroyAllWindows()
+
+  cv2.waitKey(1)
+
 if __name__ == '__main__':
-  main()
+  main2()
