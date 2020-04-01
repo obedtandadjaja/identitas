@@ -5,8 +5,16 @@ import imutils
 # import pyimagesearch.transform import four_point_transform
 
 def main():
+  images = ['training_images/ktp-1.png',
+          'training_images/ktp-2.png',
+          'training_images/ktp-3.png',
+          'training_images/ktp-4.png']
+  for image in images:
+    processKTP(image)
+
+def processKTP(image_path):
   # load the image, compute the ratio of old vs new height, clone, and resize
-  image = cv2.imread('training_images/ktp-1.png')
+  image = cv2.imread(image_path)
   ratio = image.shape[0] / 500.0
   orig = image.copy()
   image = imutils.resize(image, height = 500)
@@ -41,16 +49,11 @@ def main():
 
     cv2.drawContours(image, [hull], -1, (255, 0, 0), 3)
 
-  print("step 1: edge detection")
   # cv2.imshow("image", image)
   # cv2.imshow("res", res)
   # cv2.imshow("thres", threshold)
   # cv2.imshow("edged", edged)
-  cv2.imshow("result", image)
-  cv2.waitKey(0)
-  cv2.destroyAllWindows()
-
-  cv2.waitKey(1)
+  cv2.imwrite("results/" + image_path.replace("training_images/", ""), image)
 
 if __name__ == '__main__':
   main()
