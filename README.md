@@ -3,17 +3,10 @@ Using OpenCV and image recognition to parse data and validate Indonesian identif
 
 ## Examples
 
-![ktp1](https://www.github.com/obedtandadjaja/identitas/training_images/ktp-1.png?raw=true)
-![ktp1](https://www.github.com/obedtandadjaja/identitas/results/ktp-1.png?raw=true)
-
-![ktp2](https://www.github.com/obedtandadjaja/identitas/training_images/ktp-2.png?raw=true)
-![ktp2](https://www.github.com/obedtandadjaja/identitas/results/ktp-2.png?raw=true)
-
-![ktp3](https://www.github.com/obedtandadjaja/identitas/training_images/ktp-3.png?raw=true)
-![ktp3](https://www.github.com/obedtandadjaja/identitas/results/ktp-3.png?raw=true)
-
-![ktp4](https://www.github.com/obedtandadjaja/identitas/training_images/ktp-4.png?raw=true)
-![ktp4](https://www.github.com/obedtandadjaja/identitas/results/ktp-4.png?raw=true)
+<img src="https://raw.githubusercontent.com/obedtandadjaja/identitas/master/results/ktp-1.png" width="400" />
+<img src="https://raw.githubusercontent.com/obedtandadjaja/identitas/master/results/ktp-2.png" width="400" />
+<img src="https://raw.githubusercontent.com/obedtandadjaja/identitas/master/results/ktp-3.png" width="400" />
+<img src="https://raw.githubusercontent.com/obedtandadjaja/identitas/master/results/ktp-4.png" width="400" />
 
 ## Future Work
 
