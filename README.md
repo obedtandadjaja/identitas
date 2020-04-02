@@ -3,10 +3,22 @@ Using OpenCV and image recognition to parse data and validate Indonesian identif
 
 ## Examples
 
-<img src="https://raw.githubusercontent.com/obedtandadjaja/identitas/master/results/ktp-1.png" width="400" />
-<img src="https://raw.githubusercontent.com/obedtandadjaja/identitas/master/results/ktp-2.png" width="400" />
-<img src="https://raw.githubusercontent.com/obedtandadjaja/identitas/master/results/ktp-3.png" width="400" />
-<img src="https://raw.githubusercontent.com/obedtandadjaja/identitas/master/results/ktp-4.png" width="400" />
+<div style="display:inline-block">
+  <img src="https://raw.githubusercontent.com/obedtandadjaja/identitas/master/training_images/ktp-1.png" width="400" />
+  <img src="https://raw.githubusercontent.com/obedtandadjaja/identitas/master/results/ktp-1.png" width="400" />
+</div>
+<div style="display:inline-block">
+  <img src="https://raw.githubusercontent.com/obedtandadjaja/identitas/master/training_image/ktp-2.png" width="400" />
+  <img src="https://raw.githubusercontent.com/obedtandadjaja/identitas/master/results/ktp-2.png" width="400" />
+</div>
+<div style="display:inline-block">
+  <img src="https://raw.githubusercontent.com/obedtandadjaja/identitas/master/training_images/ktp-3.png" width="400" />
+  <img src="https://raw.githubusercontent.com/obedtandadjaja/identitas/master/results/ktp-3.png" width="400" />
+</div>
+<div style="display:inline-block">
+  <img src="https://raw.githubusercontent.com/obedtandadjaja/identitas/master/training_images/ktp-4.png" width="400" />
+  <img src="https://raw.githubusercontent.com/obedtandadjaja/identitas/master/results/ktp-4.png" width="400" />
+</div>
 
 ## Future Work
 
