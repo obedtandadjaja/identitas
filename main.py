@@ -8,7 +8,11 @@ def main():
     images = ['training_images/ktp-1.png',
           'training_images/ktp-2.png',
           'training_images/ktp-3.png',
-          'training_images/ktp-4.png']
+          'training_images/ktp-4.png',
+          'training_images/ktp-5.png',
+          'training_images/ktp-6.png',
+          'training_images/ktp-7.png',
+          'training_images/ktp-8.png']
     for image in images:
         processKTP(image)
 
