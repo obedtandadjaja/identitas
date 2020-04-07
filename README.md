@@ -1,7 +1,7 @@
 # identitas
 Using OpenCV and image recognition to parse data and validate Indonesian identification cards
 
-There are multiple challenges in achieving this desired results:
+There are multiple challenges in achieving the desired result:
 
 1. Detect where the card is
 1. Crop the original picture to just the card
