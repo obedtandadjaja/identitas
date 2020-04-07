@@ -38,7 +38,6 @@ Using OpenCV and image recognition to parse data and validate Indonesian identif
 
 ## Future Work
 
-1. Flatten picture to a 2D to take care of cases where the KTP card is slanted
 1. Figure out pattern in KTP cards and predict where information will be (i.e. where will name, address, dob be in the picture)
 1. Use text recognition to parse text from the picture
 1. Figure out how to do confidence metrics/calculation
