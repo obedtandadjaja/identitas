@@ -1,6 +1,14 @@
 # identitas
 Using OpenCV and image recognition to parse data and validate Indonesian identification cards
 
+There are multiple challenges in achieving this desired results:
+
+1. Detect where the card is
+1. Crop the original picture to just the card
+1. If the card is slanted in the picture, make the card up right
+1. Detect the text inside the card
+1. Calculate confidence level in the text detection, if it is below a certain threshold, have the user to reupload or position the camera correctly. Might need to also turn on/off the camera's flash
+
 ## Examples
 
 <div style="display:inline-block">
