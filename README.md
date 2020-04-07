@@ -9,6 +9,15 @@ There are multiple challenges in achieving the desired result:
 1. Detect the text inside the card
 1. Calculate confidence level in the text detection, if it is below a certain threshold, have the user to reupload or position the camera correctly. Might need to also turn on/off the camera's flash
 
+## External factors that may affect result
+
+1. Image/sensor noise. Sensor noise from a handheld camera is typically higher than that of a traditional scanner.
+2. Viewing angles. The scene might not have a viewing angle that is parallel to the text.
+3. Blurring.
+4. Lighting condition. We cannot control if the camera has flash on, or if the sun is shining brightly.
+5. Resolution. Differences in camera quality might affect the amount of noise in the scene.
+6. Non-paper objects. Paper is not reflective, but text that appear on a reflective object makes it harder to detect.
+
 ## Examples
 
 <div style="display:inline-block">
