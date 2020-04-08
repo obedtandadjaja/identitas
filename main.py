@@ -139,9 +139,6 @@ def fourPointTransform(image, pts):
     return warped
 
 def detectText(image, width, height, east_path, min_confidence, padding):
-    # the resulting region of interests
-    rois = []
-
     orig = image.copy()
     (origH, origW) = image.shape[:2]
     (newH, newW) = (args['height'], args['width'])
@@ -249,18 +246,26 @@ def detectText(image, width, height, east_path, min_confidence, padding):
         endX = min(origW, endX + dX)
         endY = min(origH, endY + dY)
 
-        rois.append(orig[startY:endY, startX:endX])
-        parseTextFromCandidateRegion(orig[startY:endY, startX:endX])
+        text = parseTextFromCandidateRegion(orig[startY:endY, startX:endX])
 
         # draw the boudning box on the image
         cv2.rectangle(orig, (startX, startY), (endX, endY), (0, 255, 0), 2)
+        cv2.putText(orig, text, (startX, startY - 20),
+                cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 255), 3)
 
     return orig
   
 def parseTextFromCandidateRegion(roi):
+    print('[INFO] loading Tesseract text parser...')
+    start = time.time()
+
     config = ('-l ind --oem 1 --psm 7')
     text = pytesseract.image_to_string(roi, config=config)
-    print(text)
+
+    end = time.time()
+    print('[INFO] text parsing took {:.6f} seconds'.format(end-start))
+
+    return text
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
