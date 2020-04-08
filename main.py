@@ -4,6 +4,7 @@ import os
 import imutils
 from imutils.object_detection import non_max_suppression
 import argparse
+import pytesseract
 import time
 
 def main(args):
@@ -17,9 +18,9 @@ def main(args):
           'training_images/ktp-8.png']
     for image in images:
         processKTP(image, args['width'], args['height'], 
-                args['east'], args['min_confidence'])
+                args['east'], args['min_confidence'], args['padding'])
 
-def processKTP(image_path, width, height, east_path, min_confidence):
+def processKTP(image_path, width, height, east_path, min_confidence, padding):
     # load the image, compute the ratio of old vs new height, clone, and resize
     image = cv2.imread(image_path)
 
@@ -66,7 +67,7 @@ def processKTP(image_path, width, height, east_path, min_confidence):
         # transform to flattened image (bird view)
         flat = fourPointTransform(image, points)
 
-        res = detectText(flat, width, height, east_path, min_confidence)
+        res = detectText(flat, width, height, east_path, min_confidence, padding)
 
         cv2.imwrite('results/' + image_path.replace('training_images/', ''), res)
     else:
@@ -137,14 +138,14 @@ def fourPointTransform(image, pts):
     # return the warped image
     return warped
 
-def detectText(image, width, height, east_path, min_confidence):
+def detectText(image, width, height, east_path, min_confidence, padding):
     orig = image.copy()
-    (H, W) = image.shape[:2]
+    (origH, origW) = image.shape[:2]
     (newH, newW) = (args['height'], args['width'])
     
     # calculate ratio to new height and width
-    rW = W / float(newW)
-    rH = H / float(newH)
+    rW = origW / float(newW)
+    rH = origH / float(newH)
 
     # resize the image using the ratio
     image = cv2.resize(image, (newW, newH))
@@ -233,6 +234,18 @@ def detectText(image, width, height, east_path, min_confidence):
         endX = int(endX * rW)
         endY = int(endY * rH)
 
+        # in order to obtain a better OCR of the text we can potentially 
+        # apply a bitof padding surrounding the bounding box -- here we are
+        # computing the deltas in both the x and y directions
+        dX = int((endX - startX) * padding)
+        dY = int((endY - startY) * padding)
+
+        # apply padding to each side of the bounding box, respectively
+        startX = max(0, startX - dX)
+        startY = max(0, startY - dY)
+        endX = min(origW, endX + dX)
+        endY = min(origH, endY + dY)
+
         # draw the boudning box on the image
         cv2.rectangle(orig, (startX, startY), (endX, endY), (0, 255, 0), 2)
 
@@ -245,6 +258,7 @@ if __name__ == '__main__':
     # EAST text requires that input image dimensions be multiples of 32
     ap.add_argument('-W', '--width', type=int, default=640)
     ap.add_argument('-H', '--height', type=int, default=640)
+    ap.add_argument('-P', '--padding', type=float, default=0.05)
     args = vars(ap.parse_args())
 
     main(args)
