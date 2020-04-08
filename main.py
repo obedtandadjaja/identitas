@@ -251,7 +251,7 @@ def detectText(image, width, height, east_path, min_confidence, padding):
         # draw the boudning box on the image
         cv2.rectangle(orig, (startX, startY), (endX, endY), (0, 255, 0), 2)
         cv2.putText(orig, text, (startX, startY - 20),
-                cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 255), 3)
+                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 3)
 
     return orig
   
