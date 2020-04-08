@@ -53,6 +53,12 @@ There are multiple challenges in achieving the desired result:
   <img src="https://raw.githubusercontent.com/obedtandadjaja/identitas/master/results/ktp-8.png" width="400" />
 </div>
 
+## Project Scope
+
+The project is still using some external libraries to process the text, however, it will be restricted from using any paid services like Google Cloud Vision API which basically does everything for you.
+
+Although yes in a production environment using some machine learning model maintained by Google will yield better results, the goal of this project is to learn what Google Cloud Vision API is doing under the hood.
+
 ## Future Work
 
 1. Figure out pattern in KTP cards and predict where information will be (i.e. where will name, address, dob be in the picture)
