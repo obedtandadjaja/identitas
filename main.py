@@ -1,5 +1,5 @@
 from fastapi import Depends, FastAPI, Header, HTTPException
-from routers import auth, ktp
+from api.v1.endpoints import auth, ktp
 
 app = FastAPI()
 
