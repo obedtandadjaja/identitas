@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, Header, HTTPException
+from routers import auth, ktp
 
 app = FastAPI()
 
@@ -6,62 +7,14 @@ app = FastAPI()
 def read_health():
     return {"status": "OK"}
 
-""" POST processKTP
-request: {
-  bytes: string base64,
-  api: string,
-  retain: bool,
-  donate_for_training: bool
-}
+async def get_token_header(authorization: str = Header(...)):
+    if authorization != "secret":
+        raise HTTPException(status_code=400, detail="Authorization header invalid")
 
-response: {
-  result: {
-    data: {
-        -- consider having the result be in Indonesian
-        nik: ...,
-        name: ...,
-        date_of_birth: ...,
-        place_of_birth: ...,
-        gender: ...,
-        blood_type: ...,
-        address: {
-        },
-        religion: ...,
-        marriage_status: ...,
-        job: ...,
-        citizenship: ...,
-        valid_until: ...
-    },
-    confidence: float
-  },
-  error: {
-    message: string,
-    details: string
-  }
-}
-"""
-
-""" POST login
-request: {
-  email: string,
-  password: string
-}
-
-response: {
-  session_token: string,
-  access_token: string
-}
-"""
-
-""" POST signup
-request: {
-  email: string,
-  password: string,
-  type: free | pro | deluxe
-}
-
-response: {
-  session_token: string,
-  access_token: string
-}
-"""
+app.include_router(auth.router)
+app.include_router(
+        ktp.router,
+        prefix="/api/v1/ktp",
+        dependencies=[Depends(get_token_header)],
+        responses={404: {"description": "Not Found"}},
+)
