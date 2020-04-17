@@ -1,20 +1,37 @@
 import os
 
+from pydantic import BaseSettings, EmailStr, HttpUrl, PostgresDsn, validator
 
-SECRET_KEY = os.getenvb(b"SECRET_KEY")
-SENTRY_DSN = os.getenv("SENTRY_DSN")
 
-# Postgres
-POSTGRES_SERVER = os.getenv("POSTGRES_SERVER")
-POSTGRES_USER = os.getenv("POSTGRES_USER")
-POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-POSTGRES_DB = os.getenv("POSTGRES_DB")
-POSTGRES_URI = (
-     f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}/{POSTGRES_DB}"
-)
+class Settings(BaseSettings):
+   
+    SECRET_KEY: str
 
-# App-specific
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
-EMAIL_RESET_TOKEN_EXPIRE_HOURS = 48
-FIRST_SUPERUSER_EMAIL = os.getenv("FIRST_SUPERUSER_EMAIL")
-FIRST_SUPERUSER_PASSWORD = os.getenv("FIRST_SUPERUSER_PASSWORD")
+    SENTRY_DSN: HttpUrl = None
+
+    # Postgres
+    POSTGRES_SERVER: str
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_DB: str
+    POSTGRES_URI: PostgresDsn = None
+
+    @validator("POSTGRES_URI", pre=True)
+    def db_connection(cls, v, values):
+        if isinstance(v, str):
+            return v
+        return PostgresDsn.build(
+            scheme="postgresql",
+            user=values.get("POSTGRES_USER"),
+            password=values.get("POSTGRES_PASSWORD"),
+            host=values.get("POSTGRES_HOST"),
+            path=f"/{values.get('POSTGRES_DB') or ''}",
+        )
+
+    # App-specific
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
+    FIRST_SUPERUSER_EMAIL: EmailStr
+    FIRST_SUPERUSER_PASSWORD: str
+
+settings = Settings()
