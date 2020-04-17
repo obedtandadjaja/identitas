@@ -7,5 +7,4 @@ class CustomBase(object):
     def __tablename__(cls):
         return cls.__name__.lower()
 
-
 Base = declarative_base(cls=CustomBase)
