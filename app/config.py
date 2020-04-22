@@ -30,6 +30,7 @@ class Settings(BaseSettings):
 
     # App-specific
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    SESSION_TOKEN_EXPIRE_DAYS: int = 7
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
     FIRST_SUPERUSER_EMAIL: EmailStr
     FIRST_SUPERUSER_PASSWORD: str

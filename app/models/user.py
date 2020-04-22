@@ -1,4 +1,5 @@
 from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy.orm import relationship, Session
 
 from app.db.base_class import Base
 from app.lib.security import hash_password, verify_password
@@ -13,6 +14,7 @@ class User(Base):
     hashed_password = Column(String)
     is_active = Column(Boolean(), default=True)
     is_superuser = Column(Boolean(), default=False)
+    sessions = relationship("Session", back_populates="user")
 
 # This class is like Rails' Model class. Include methods that  are too complicated
 class UserModel(ModelBase[User]):
