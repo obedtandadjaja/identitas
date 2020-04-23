@@ -26,9 +26,9 @@ def upgrade():
         sa.Column('hashed_password', sa.String(), nullable=True),
         sa.Column('is_active', sa.Boolean(), nullable=True),
         sa.Column('is_superuser', sa.Boolean(), nullable=True),
-        sa.PrimaryConstraint('id')
+        sa.PrimaryKeyConstraint('id')
     )
-    op.create_index(of.f('idx_user_email'), 'users', ['email'], unique=True)
+    op.create_index(op.f('idx_user_email'), 'users', ['email'], unique=True)
 
 def downgrade():
     op.drop_index(op.f('idx_user_email'), table_name='users')

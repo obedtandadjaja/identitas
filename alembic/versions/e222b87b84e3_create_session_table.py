@@ -25,7 +25,7 @@ def upgrade():
         sa.Column('user_agent', sa.String(), nullable=False),
         sa.Column('last_accessed_at', sa.DateTime(), nullable=False),
         sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-        sa.PrimaryConstraint('id')
+        sa.PrimaryKeyConstraint('id')
     )
 
 def downgrade():
