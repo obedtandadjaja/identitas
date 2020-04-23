@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     SENTRY_DSN: HttpUrl = None
 
     # Postgres
-    POSTGRES_SERVER: str
+    POSTGRES_HOST: str
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
