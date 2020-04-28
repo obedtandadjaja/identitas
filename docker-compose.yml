@@ -1,43 +1,42 @@
 version: "3.3"
 services:
   proxy:
-    image: traefix:v1.7
-    networks:
-      - ${TRAEFIK_PUBLIC_NETWORK}
-      - default
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: --docker \
-      --docker.swarmmode \
-      --docker.watch \
-      --docker.exposedbydefault=false \
-      --constraints=tag==${TRAEFIK_TAG} \
-      --logLevel=INFO \
-      --accessLog \
-      --web
-    deploy:
-      placement:
-        constraints:
-          - node.role == manager
-        labels:
-          - traefik.frontend.rule=Host:${DOMAIN}
-          - traefik.enable=true
-          - traefik.port=80
-          - traefik.tags=${TRAEFIK_PUBLIC_TAG}
-          - traefik.docker.network=${TRAEFIK_PUBLIC_NETWORK}
-          - traefik.frontend.entryPoints=http,https
-          - traefik.frontend.redirect.entryPoint=https
+    image: traefik:v1.7
+  #   networks:
+  #     - ${TRAEFIK_PUBLIC_NETWORK}
+  #     - default
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   command: --docker \
+  #     --docker.swarmmode \
+  #     --docker.watch \
+  #     --docker.exposedbydefault=false \
+  #     --constraints=tag==${TRAEFIK_TAG} \
+  #     --logLevel=INFO \
+  #     --accessLog \
+  #     --web
+  #   deploy:
+  #     placement:
+  #       constraints:
+  #         - node.role == manager
+  #     labels:
+  #       - traefik.frontend.rule=Host:${DOMAIN}
+  #       - traefik.enable=true
+  #       - traefik.port=80
+  #       - traefik.tags=${TRAEFIK_PUBLIC_TAG}
+  #       - traefik.docker.network=${TRAEFIK_PUBLIC_NETWORK}
+  #       - traefik.frontend.entryPoints=http,https
+  #       - traefik.frontend.redirect.entryPoint=https
 
   backend:
-    image: '${DOCKER_IMAGE_BACKEND}:${TAG-latest}'
+    image: 'backend:${TAG-latest}'
     env_file:
       - .env
     environment:
       - SERVER_NAME=${DOMAIN}
       - SERVER_HOST=https://${DOMAIN}
     build:
-      context: ./app
-      dockerfile: app.dockerfile
+      dockerfile: app.Dockerfile
       args:
         INSTALL_DEV: ${INSTALL_DEV-false}
     deploy:
@@ -46,6 +45,9 @@ services:
         - traefik.enable=true
         - traefik.port=80
         - traefik.tags=${TRAEFIK_TAG}
+
+  queue:
+    image: rabbitmq:3
 
   celeryworker:
     image: '${DOCKER_IMAGE_CELERYWORKER}:${TAG-latest}'
@@ -62,6 +64,6 @@ services:
       args:
         INSTALL_DEV: ${INSTALL_DEV-false}
 
-  networks:
-    traefik-public:
-      external: ${TRAEFIK_PUBLIC_NETWORK_IS_EXTERNAL-true}
+networks:
+  traefik-public:
+    external: ${TRAEFIK_PUBLIC_NETWORK_IS_EXTERNAL-true}

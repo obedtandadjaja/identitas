@@ -66,3 +66,7 @@ Although yes in a production environment using some machine learning model maint
 1. Use text recognition to parse text from the picture
 1. Figure out how to do confidence metrics/calculation
 1. Convert to microservice
+
+## Running
+
+Running the migration: `alembic upgread head`
