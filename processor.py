@@ -1,24 +1,24 @@
 import numpy as np
 from cv2 import cv2
-import os
-import imutils
 from imutils.object_detection import non_max_suppression
 import argparse
 import pytesseract
 import time
 
+
 def main(args):
     images = ['training_images/ktp-1.png',
-          'training_images/ktp-2.png',
-          'training_images/ktp-3.png',
-          'training_images/ktp-4.png',
-          'training_images/ktp-5.png',
-          'training_images/ktp-6.png',
-          'training_images/ktp-7.png',
-          'training_images/ktp-8.png']
+              'training_images/ktp-2.png',
+              'training_images/ktp-3.png',
+              'training_images/ktp-4.png',
+              'training_images/ktp-5.png',
+              'training_images/ktp-6.png',
+              'training_images/ktp-7.png',
+              'training_images/ktp-8.png']
     for image in images:
-        processKTP(image, args['width'], args['height'], 
-                args['east'], args['min_confidence'], args['padding'])
+        processKTP(image, args['width'], args['height'],
+                   args['east'], args['min_confidence'], args['padding'])
+
 
 def processKTP(image_path, width, height, east_path, min_confidence, padding):
     # load the image, compute the ratio of old vs new height, clone, and resize
@@ -29,7 +29,7 @@ def processKTP(image_path, width, height, east_path, min_confidence, padding):
     lower_blue = np.array([80, 0, 0])
     upper_blue = np.array([140, 255, 255])
     mask = cv2.inRange(hsv, lower_blue, upper_blue)
-    res = cv2.bitwise_and(hsv, hsv, mask = mask)
+    res = cv2.bitwise_and(hsv, hsv, mask=mask)
 
     # convert image to grayscale, blur it, and find edges
     gray = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
@@ -41,14 +41,15 @@ def processKTP(image_path, width, height, east_path, min_confidence, padding):
     # use canny edge detection algorithm
     # edged = cv2.Canny(threshold, 75, 200)
 
-    contours,hierarchy = cv2.findContours(threshold, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    contours, hierarchy = cv2.findContours(threshold, cv2.RETR_EXTERNAL,
+                                           cv2.CHAIN_APPROX_NONE)
 
     if len(contours) != 0:
         # draw in blue the contours that were founded
         cv2.drawContours(threshold, contours, -1, 255, 3)
 
         # find the biggest countour (c) by the area
-        contour = max(contours, key = cv2.contourArea)
+        contour = max(contours, key=cv2.contourArea)
 
         # smooth the contour into a convexhull
         hull = cv2.convexHull(contour)
@@ -67,11 +68,14 @@ def processKTP(image_path, width, height, east_path, min_confidence, padding):
         # transform to flattened image (bird view)
         flat = fourPointTransform(image, points)
 
-        res = detectText(flat, width, height, east_path, min_confidence, padding)
+        res = detectText(flat, width, height, east_path, min_confidence,
+                         padding)
 
-        cv2.imwrite('results/' + image_path.replace('training_images/', ''), res)
+        cv2.imwrite('results/' + image_path.replace('training_images/', ''),
+                    res)
     else:
         print('Error processing image')
+
 
 def orderPoints(hull):
     pts = np.array(map(lambda x: x[0], hull))
@@ -80,24 +84,25 @@ def orderPoints(hull):
     # such that the first entry in the list is the top-left,
     # the second entry is the top-right, the third is the
     # bottom-right, and the fourth is the bottom-left
-    rect = np.zeros((4, 2), dtype = 'float32')
+    rect = np.zeros((4, 2), dtype='float32')
 
     # the top-left point will have the smallest sum, whereas
     # the bottom-right point will have the largest sum
     # sum here is x + y coordinate
-    s = pts.sum(axis = 1)
+    s = pts.sum(axis=1)
     rect[0] = pts[np.argmin(s)]
     rect[2] = pts[np.argmax(s)]
 
     # now, compute the difference between the points, the
     # top-right point will have the smallest difference,
     # whereas the bottom-left will have the largest difference
-    diff = np.diff(pts, axis = 1)
+    diff = np.diff(pts, axis=1)
     rect[1] = pts[np.argmin(diff)]
     rect[3] = pts[np.argmax(diff)]
 
     # return the ordered coordinates
     return rect
+
 
 # reference: https://www.pyimagesearch.com/2014/08/25/4-point-opencv-getperspective-transform-example/
 def fourPointTransform(image, pts):
@@ -126,10 +131,10 @@ def fourPointTransform(image, pts):
     # in the top-left, top-right, bottom-right, and bottom-left
     # order
     dst = np.array([
-            [0, 0],
-            [maxWidth - 1, 0],
-            [maxWidth - 1, maxHeight - 1],
-            [0, maxHeight - 1]], dtype = 'float32')
+        [0, 0],
+        [maxWidth - 1, 0],
+        [maxWidth - 1, maxHeight - 1],
+        [0, maxHeight - 1]], dtype = 'float32')
 
     # compute the perspective transform matrix and then apply it
     M = cv2.getPerspectiveTransform(pts, dst)
@@ -142,7 +147,7 @@ def detectText(image, width, height, east_path, min_confidence, padding):
     orig = image.copy()
     (origH, origW) = image.shape[:2]
     (newH, newW) = (args['height'], args['width'])
-    
+
     # calculate ratio to new height and width
     rW = origW / float(newW)
     rH = origH / float(newH)
@@ -155,11 +160,11 @@ def detectText(image, width, height, east_path, min_confidence, padding):
     # are interested -- the first is the output probabilities and the second
     # can be used to derive the bounding box coordinates of text
     layerNames = [
-            # uses Sigmoid activation to give us probability of a region
-            # containing text or not
-            'feature_fusion/Conv_7/Sigmoid', 
-            # output feature map that represents the geometry of the image
-            'feature_fusion/concat_3']
+        # uses Sigmoid activation to give us probability of a region
+        # containing text or not
+        'feature_fusion/Conv_7/Sigmoid', 
+        # output feature map that represents the geometry of the image
+        'feature_fusion/concat_3']
 
     # load the pre-trained EAST text detector
     print('[INFO] loading EAST text detector...')
@@ -168,7 +173,7 @@ def detectText(image, width, height, east_path, min_confidence, padding):
     # construct a blob from the image and then perform a forward pass of the
     # model to obtain the two output layer sets
     blob = cv2.dnn.blobFromImage(image, 1.0, (W, H), 
-            (123.68, 116.78, 103.94), swapRB=True, crop=False)
+                                 (123.68, 116.78, 103.94), swapRB=True, crop=False)
     start = time.time()
     net.setInput(blob)
     (scores, geometry) = net.forward(layerNames)
@@ -251,10 +256,11 @@ def detectText(image, width, height, east_path, min_confidence, padding):
         # draw the boudning box on the image
         cv2.rectangle(orig, (startX, startY), (endX, endY), (0, 255, 0), 2)
         cv2.putText(orig, text, (startX, startY - 20),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 3)
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 3)
 
     return orig
-  
+
+
 def parseTextFromCandidateRegion(roi):
     print('[INFO] loading Tesseract text parser...')
     start = time.time()
@@ -266,6 +272,7 @@ def parseTextFromCandidateRegion(roi):
     print('[INFO] text parsing took {:.6f} seconds'.format(end-start))
 
     return text
+
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
